@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -7,10 +8,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Card } from "@/components/ui/card";
-import { Palette, Save, Trash2, Check } from "lucide-react";
+import { Palette, Save, Trash2, Check, Clock, Download, Upload, Layers } from "lucide-react";
 import { useTheme, CustomTheme, ThemeBase } from "@/context/ThemeContext";
 import { cn } from "@/lib/utils";
 import { ColorPalette } from "./ColorPalette";
+import { toast } from "sonner";
 
 interface ThemeSettingsProps {
   open: boolean;
@@ -18,13 +20,14 @@ interface ThemeSettingsProps {
 }
 
 export default function ThemeSettings({ open, onOpenChange }: ThemeSettingsProps) {
-  const { customThemes, createTheme, applyTheme, deleteTheme, currentTheme } = useTheme();
+  const { customThemes, createTheme, applyTheme, deleteTheme, currentTheme, recentThemes, exportTheme, importTheme } = useTheme();
   
   const [activeTab, setActiveTab] = useState<string>("browse");
   const [newThemeName, setNewThemeName] = useState<string>("My Custom Theme");
   const [newThemeBase, setNewThemeBase] = useState<ThemeBase>("light");
   const [newPrimaryColor, setNewPrimaryColor] = useState<string>("#6366f1");
   const [newAccentColor, setNewAccentColor] = useState<string>("#4f46e5");
+  const [importText, setImportText] = useState<string>("");
 
   const handleCreateTheme = () => {
     createTheme({
@@ -37,6 +40,29 @@ export default function ThemeSettings({ open, onOpenChange }: ThemeSettingsProps
     // Reset form
     setNewThemeName("My Custom Theme");
     setActiveTab("browse");
+  };
+  
+  const handleExportTheme = (themeId: string) => {
+    const themeData = exportTheme(themeId);
+    if (themeData) {
+      // Copy to clipboard
+      navigator.clipboard.writeText(themeData)
+        .then(() => toast.success("Theme copied to clipboard"))
+        .catch(() => toast.error("Failed to copy to clipboard"));
+    }
+  };
+  
+  const handleImportTheme = () => {
+    if (!importText.trim()) {
+      toast.error("Please paste theme data");
+      return;
+    }
+    
+    const success = importTheme(importText);
+    if (success) {
+      setImportText("");
+      setActiveTab("browse");
+    }
   };
 
   const ThemePreview = ({ base, primary, accent }: { base: ThemeBase; primary: string; accent: string }) => {
@@ -110,12 +136,43 @@ export default function ThemeSettings({ open, onOpenChange }: ThemeSettingsProps
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-2 mb-4">
+          <TabsList className="grid grid-cols-3 mb-4">
             <TabsTrigger value="browse">Browse Themes</TabsTrigger>
-            <TabsTrigger value="create">Create New Theme</TabsTrigger>
+            <TabsTrigger value="create">Create New</TabsTrigger>
+            <TabsTrigger value="import">Import/Export</TabsTrigger>
           </TabsList>
           
           <TabsContent value="browse" className="space-y-4">
+            {recentThemes.length > 0 && (
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                  <span>Recently Used</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {recentThemes.map(themeId => {
+                    const theme = customThemes.find(t => t.id === themeId);
+                    if (!theme) return null;
+                    return (
+                      <Button 
+                        key={themeId} 
+                        variant={currentTheme === themeId ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => applyTheme(themeId)}
+                        className="flex gap-2"
+                      >
+                        <div 
+                          className="w-3 h-3 rounded-full" 
+                          style={{ backgroundColor: theme.primaryColor }} 
+                        />
+                        {theme.name}
+                      </Button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {customThemes.map((theme) => (
                 <Card 
@@ -151,7 +208,19 @@ export default function ThemeSettings({ open, onOpenChange }: ThemeSettingsProps
                     />
                   </div>
                   
-                  <div className="flex justify-end">
+                  <div className="flex justify-end gap-1">
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="h-7 w-7"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleExportTheme(theme.id);
+                      }}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    
                     {!["system", "light", "dark"].includes(theme.id) && (
                       <Button 
                         variant="outline" 
@@ -209,6 +278,7 @@ export default function ThemeSettings({ open, onOpenChange }: ThemeSettingsProps
                   <ColorPalette
                     selectedColor={newPrimaryColor}
                     onSelectColor={setNewPrimaryColor}
+                    showHarmonies={true}
                   />
                   <div className="flex items-center gap-2">
                     <Input
@@ -237,6 +307,7 @@ export default function ThemeSettings({ open, onOpenChange }: ThemeSettingsProps
                   <ColorPalette
                     selectedColor={newAccentColor}
                     onSelectColor={setNewAccentColor}
+                    showHarmonies={true}
                   />
                   <div className="flex items-center gap-2">
                     <Input
@@ -269,6 +340,72 @@ export default function ThemeSettings({ open, onOpenChange }: ThemeSettingsProps
                 <p className="text-xs text-muted-foreground mt-2">
                   This preview shows how your theme will look. Dark/light base themes will still affect many other colors automatically.
                 </p>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="import" className="space-y-4">
+            <div className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="import-theme">Import Theme</Label>
+                <div className="border rounded-md p-4 bg-muted/30 space-y-4">
+                  <textarea 
+                    id="import-theme"
+                    className="w-full h-32 rounded-md p-3 bg-background border resize-none"
+                    placeholder='Paste theme data here: {"name":"My Theme","base":"light","primaryColor":"#6366f1","accentColor":"#4f46e5"}'
+                    value={importText}
+                    onChange={(e) => setImportText(e.target.value)}
+                  />
+                  <Button 
+                    onClick={handleImportTheme}
+                    className="w-full flex items-center gap-2"
+                  >
+                    <Upload className="h-4 w-4" />
+                    Import Theme
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Paste theme data that you've received from another user
+                </p>
+              </div>
+              
+              <Separator />
+              
+              <div>
+                <h3 className="text-sm font-medium mb-2">Export My Themes</h3>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Select a theme to export and share with others
+                </p>
+                <div className="space-y-2">
+                  {customThemes
+                    .filter(theme => !["system", "light", "dark"].includes(theme.id))
+                    .map(theme => (
+                      <Card key={theme.id} className="p-3 flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-4 h-4 rounded-full" 
+                            style={{ backgroundColor: theme.primaryColor }} 
+                          />
+                          <span>{theme.name}</span>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleExportTheme(theme.id)}
+                          className="flex items-center gap-1"
+                        >
+                          <Download className="h-3 w-3" />
+                          Copy
+                        </Button>
+                      </Card>
+                    ))}
+                    
+                  {customThemes.filter(theme => !["system", "light", "dark"].includes(theme.id)).length === 0 && (
+                    <p className="text-sm text-muted-foreground italic">
+                      No custom themes created yet. Create one in the "Create New" tab.
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </TabsContent>

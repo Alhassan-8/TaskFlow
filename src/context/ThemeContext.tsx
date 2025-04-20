@@ -17,10 +17,13 @@ export interface CustomTheme {
 interface ThemeContextProps {
   currentTheme: string;
   customThemes: CustomTheme[];
+  recentThemes: string[];
   createTheme: (theme: Omit<CustomTheme, "id" | "isActive">) => void;
   applyTheme: (themeId: string) => void;
   deleteTheme: (themeId: string) => void;
   updateSystemTheme: () => void;
+  exportTheme: (themeId: string) => string;
+  importTheme: (themeData: string) => boolean;
 }
 
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
@@ -108,6 +111,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return storedTheme || "system";
   });
 
+  // Track recently used themes (last 5)
+  const [recentThemes, setRecentThemes] = useState<string[]>(() => {
+    const storedRecent = localStorage.getItem("recentThemes");
+    return storedRecent ? JSON.parse(storedRecent) : ["system"];
+  });
+
   // Apply theme colors based on current theme
   useEffect(() => {
     // Find active theme
@@ -148,6 +157,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     // Save current theme to localStorage
     localStorage.setItem("currentTheme", currentTheme);
+    
+    // Update recent themes
+    setRecentThemes(prev => {
+      const newRecent = [currentTheme, ...prev.filter(id => id !== currentTheme)].slice(0, 5);
+      localStorage.setItem("recentThemes", JSON.stringify(newRecent));
+      return newRecent;
+    });
     
     // Log for debugging
     console.log("Theme applied:", {
@@ -233,15 +249,65 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
   
+  // Export theme as JSON string
+  const exportTheme = (themeId: string): string => {
+    const theme = customThemes.find(t => t.id === themeId);
+    if (!theme) {
+      toast.error("Theme not found");
+      return "";
+    }
+    
+    // Create a version without the isActive property and with a generic id
+    const exportableTheme = {
+      name: theme.name,
+      base: theme.base,
+      primaryColor: theme.primaryColor,
+      accentColor: theme.accentColor,
+    };
+    
+    return JSON.stringify(exportableTheme);
+  };
+  
+  // Import theme from JSON string
+  const importTheme = (themeData: string): boolean => {
+    try {
+      const importedTheme = JSON.parse(themeData);
+      
+      // Validate theme data
+      if (!importedTheme.name || !importedTheme.base || 
+          !importedTheme.primaryColor || !importedTheme.accentColor) {
+        toast.error("Invalid theme data");
+        return false;
+      }
+      
+      // Create the theme
+      createTheme({
+        name: `${importedTheme.name} (Imported)`,
+        base: importedTheme.base as ThemeBase,
+        primaryColor: importedTheme.primaryColor,
+        accentColor: importedTheme.accentColor
+      });
+      
+      return true;
+    } catch (error) {
+      toast.error("Failed to import theme");
+      console.error("Theme import error:", error);
+      return false;
+    }
+  };
+  
   return (
     <ThemeContext.Provider
       value={{
         currentTheme,
         customThemes,
+        recentThemes,
         createTheme,
         applyTheme,
         deleteTheme,
-        updateSystemTheme
+        updateSystemTheme,
+        exportTheme,
+        importTheme
       }}
     >
       {children}

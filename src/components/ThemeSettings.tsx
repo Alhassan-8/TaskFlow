@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Palette, Save, Trash2, Check } from "lucide-react";
 import { useTheme, CustomTheme, ThemeBase } from "@/context/ThemeContext";
 import { cn } from "@/lib/utils";
+import { ColorPalette } from "./ColorPalette";
 
 interface ThemeSettingsProps {
   open: boolean;
@@ -39,7 +39,6 @@ export default function ThemeSettings({ open, onOpenChange }: ThemeSettingsProps
     setActiveTab("browse");
   };
 
-  // Preview component to show how the theme will look
   const ThemePreview = ({ base, primary, accent }: { base: ThemeBase; primary: string; accent: string }) => {
     const isDark = base === "dark";
     
@@ -206,20 +205,26 @@ export default function ThemeSettings({ open, onOpenChange }: ThemeSettingsProps
               
               <div className="grid gap-2">
                 <Label htmlFor="primary-color">Primary Color</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="primary-color"
-                    type="color"
-                    value={newPrimaryColor}
-                    onChange={(e) => setNewPrimaryColor(e.target.value)}
-                    className="w-12 h-10 p-1"
+                <div className="space-y-4">
+                  <ColorPalette
+                    selectedColor={newPrimaryColor}
+                    onSelectColor={setNewPrimaryColor}
                   />
-                  <Input
-                    value={newPrimaryColor}
-                    onChange={(e) => setNewPrimaryColor(e.target.value)}
-                    className="flex-1"
-                    placeholder="#6366f1"
-                  />
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="primary-color"
+                      type="color"
+                      value={newPrimaryColor}
+                      onChange={(e) => setNewPrimaryColor(e.target.value)}
+                      className="w-12 h-10 p-1"
+                    />
+                    <Input
+                      value={newPrimaryColor}
+                      onChange={(e) => setNewPrimaryColor(e.target.value)}
+                      className="flex-1"
+                      placeholder="#6366f1"
+                    />
+                  </div>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Used for buttons, active items, and important UI elements
@@ -228,20 +233,26 @@ export default function ThemeSettings({ open, onOpenChange }: ThemeSettingsProps
               
               <div className="grid gap-2">
                 <Label htmlFor="accent-color">Accent Color</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="accent-color"
-                    type="color"
-                    value={newAccentColor}
-                    onChange={(e) => setNewAccentColor(e.target.value)}
-                    className="w-12 h-10 p-1"
+                <div className="space-y-4">
+                  <ColorPalette
+                    selectedColor={newAccentColor}
+                    onSelectColor={setNewAccentColor}
                   />
-                  <Input
-                    value={newAccentColor}
-                    onChange={(e) => setNewAccentColor(e.target.value)}
-                    className="flex-1"
-                    placeholder="#4f46e5"
-                  />
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="accent-color"
+                      type="color"
+                      value={newAccentColor}
+                      onChange={(e) => setNewAccentColor(e.target.value)}
+                      className="w-12 h-10 p-1"
+                    />
+                    <Input
+                      value={newAccentColor}
+                      onChange={(e) => setNewAccentColor(e.target.value)}
+                      className="flex-1"
+                      placeholder="#4f46e5"
+                    />
+                  </div>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Used for highlights, secondary actions, and decorative elements

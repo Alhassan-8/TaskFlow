@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useTaskContext } from "@/context/TaskContext";
 import TaskCard from "./TaskCard";
@@ -10,11 +9,12 @@ interface BoardViewProps {
 }
 
 export default function BoardView({ onTaskClick }: BoardViewProps) {
-  const { tasks, projects, currentProject } = useTaskContext();
+  const { tasks, projects, currentProject, searchResults } = useTaskContext();
 
+  const tasksToFilter = searchResults || tasks;
   const filteredTasks = currentProject === "all"
-    ? tasks
-    : tasks.filter(task => task.projectId === currentProject);
+    ? tasksToFilter
+    : tasksToFilter.filter(task => task.projectId === currentProject);
 
   const columns: { title: string; status: Status; color: string }[] = [
     { title: "To Do", status: "todo", color: "bg-blue-500/10 border-blue-500/20" },

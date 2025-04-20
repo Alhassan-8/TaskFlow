@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Task, Project, Priority, Status } from "@/types";
 
@@ -9,12 +8,14 @@ interface TaskContextType {
   projects: Project[];
   currentProject: string;
   viewType: ViewType;
+  searchResults: Task[] | null;
   addTask: (task: Omit<Task, "id" | "createdAt">) => void;
   updateTask: (id: string, taskData: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   addProject: (project: Omit<Project, "id">) => void;
   setCurrentProject: (projectId: string) => void;
   setViewType: (view: ViewType) => void;
+  setSearchResults: (results: Task[] | null) => void;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -65,6 +66,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [currentProject, setCurrentProject] = useState<string>("all");
   const [viewType, setViewType] = useState<ViewType>("list");
+  const [searchResults, setSearchResults] = useState<Task[] | null>(null);
 
   // Load data from localStorage on initial render
   useEffect(() => {
@@ -123,12 +125,14 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
         projects,
         currentProject,
         viewType,
+        searchResults,
         addTask,
         updateTask,
         deleteTask,
         addProject,
         setCurrentProject,
         setViewType,
+        setSearchResults,
       }}
     >
       {children}

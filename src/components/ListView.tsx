@@ -12,12 +12,13 @@ interface ListViewProps {
 }
 
 export default function ListView({ onTaskClick }: ListViewProps) {
-  const { tasks, projects, currentProject } = useTaskContext();
+  const { tasks, projects, currentProject, searchResults } = useTaskContext();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<Priority | "all">("all");
   const [statusFilter, setStatusFilter] = useState<Status | "all">("all");
 
-  const filteredTasks = tasks
+  const tasksToFilter = searchResults || tasks;
+  const filteredTasks = tasksToFilter
     .filter(task => currentProject === "all" ? true : task.projectId === currentProject)
     .filter(task => priorityFilter === "all" ? true : task.priority === priorityFilter)
     .filter(task => statusFilter === "all" ? true : task.status === statusFilter);

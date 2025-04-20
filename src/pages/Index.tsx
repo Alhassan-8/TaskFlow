@@ -1,3 +1,4 @@
+
 import React from "react";
 import { TaskProvider } from "@/context/TaskContext";
 import Layout from "@/components/Layout";
@@ -20,7 +21,7 @@ const IndexContent = () => {
   
   return (
     <Layout>
-      {viewType === "list" ? <ListView onTaskClick={() => {}} /> : <BoardView onTaskClick={() => {}} />}
+      {viewType === "list" ? <ListView /> : <BoardView />}
     </Layout>
   );
 };

@@ -34,7 +34,7 @@ export default function ListView({ onTaskClick }: ListViewProps) {
   };
 
   const handleTaskClick = (task: Task) => {
-    setSelectedTask(task);
+    onTaskClick(task);
   };
 
   return (

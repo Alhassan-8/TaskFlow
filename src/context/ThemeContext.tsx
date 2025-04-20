@@ -53,6 +53,50 @@ const defaultThemes: CustomTheme[] = [
   },
 ];
 
+// Helper function to convert hex to HSL
+const hexToHSL = (hex: string): string => {
+  // Remove the # if present
+  hex = hex.replace(/^#/, '');
+  
+  // Parse the hex values
+  let r = parseInt(hex.substring(0, 2), 16) / 255;
+  let g = parseInt(hex.substring(2, 4), 16) / 255;
+  let b = parseInt(hex.substring(4, 6), 16) / 255;
+  
+  // Find the min and max values to compute the lightness
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  
+  // Calculate lightness
+  let l = (max + min) / 2;
+  
+  let h = 0;
+  let s = 0;
+  
+  if (max !== min) {
+    // Calculate saturation
+    s = l > 0.5 ? (max - min) / (2 - max - min) : (max - min) / (max + min);
+    
+    // Calculate hue
+    if (max === r) {
+      h = ((g - b) / (max - min)) + (g < b ? 6 : 0);
+    } else if (max === g) {
+      h = ((b - r) / (max - min)) + 2;
+    } else if (max === b) {
+      h = ((r - g) / (max - min)) + 4;
+    }
+    
+    h = h * 60;
+  }
+  
+  // Round values
+  h = Math.round(h);
+  s = Math.round(s * 100);
+  l = Math.round(l * 100);
+  
+  return `${h} ${s}% ${l}%`;
+};
+
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [customThemes, setCustomThemes] = useState<CustomTheme[]>(() => {
     const storedThemes = localStorage.getItem("customThemes");
@@ -85,12 +129,33 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       document.documentElement.classList.remove("dark");
     }
     
-    // Apply custom colors
-    document.documentElement.style.setProperty("--custom-primary", activeTheme.primaryColor);
-    document.documentElement.style.setProperty("--custom-accent", activeTheme.accentColor);
+    // Convert colors to HSL format if they're in hex format
+    let primaryColor = activeTheme.primaryColor;
+    let accentColor = activeTheme.accentColor;
+    
+    // Check if the color is in hex format and convert to HSL
+    if (primaryColor.startsWith('#')) {
+      primaryColor = hexToHSL(primaryColor);
+    }
+    
+    if (accentColor.startsWith('#')) {
+      accentColor = hexToHSL(accentColor);
+    }
+    
+    // Apply custom colors as CSS variables
+    document.documentElement.style.setProperty("--custom-primary", primaryColor);
+    document.documentElement.style.setProperty("--custom-accent", accentColor);
     
     // Save current theme to localStorage
     localStorage.setItem("currentTheme", currentTheme);
+    
+    // Log for debugging
+    console.log("Theme applied:", {
+      id: activeTheme.id,
+      base: themeBase,
+      primaryColor,
+      accentColor
+    });
   }, [currentTheme, customThemes]);
 
   // Save custom themes to localStorage

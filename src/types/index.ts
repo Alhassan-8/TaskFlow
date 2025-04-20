@@ -18,3 +18,12 @@ export interface Project {
   name: string;
   color: string;
 }
+
+export interface Template {
+  id: string;
+  name: string;
+  title: string;
+  description: string;
+  priority: Priority;
+  projectId: string;
+}

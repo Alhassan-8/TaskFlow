@@ -1,8 +1,10 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import SearchBar from "./SearchBar";
 import { ThemeToggle } from "./ThemeToggle";
+import TaskExport from "./TaskExport";
 
 interface HeaderProps {
   onAddTask: () => void;
@@ -18,6 +20,7 @@ export default function Header({ onAddTask }: HeaderProps) {
             <Plus className="mr-2 h-4 w-4" />
             Add Task
           </Button>
+          <TaskExport />
         </div>
         <ThemeToggle />
       </div>

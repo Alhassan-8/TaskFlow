@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Task, Project, Priority, Status } from "@/types";
+import { Task, Project, Priority, Status, Template } from "@/types";
 
 type ViewType = "list" | "board";
 
 interface TaskContextType {
   tasks: Task[];
   projects: Project[];
+  templates: Template[];
   currentProject: string;
   viewType: ViewType;
   searchResults: Task[] | null;
@@ -13,6 +14,8 @@ interface TaskContextType {
   updateTask: (id: string, taskData: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   addProject: (project: Omit<Project, "id">) => void;
+  addTemplate: (template: Omit<Template, "id">) => void;
+  deleteTemplate: (id: string) => void;
   setCurrentProject: (projectId: string) => void;
   setViewType: (view: ViewType) => void;
   setSearchResults: (results: Task[] | null) => void;
@@ -20,7 +23,6 @@ interface TaskContextType {
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
-// Sample initial data
 const initialProjects: Project[] = [
   { id: "p1", name: "Personal", color: "#6366f1" },
   { id: "p2", name: "Work", color: "#8b5cf6" },
@@ -59,16 +61,25 @@ const initialTasks: Task[] = [
   },
 ];
 
-export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ 
-  children 
-}) => {
+const initialTemplates: Template[] = [
+  {
+    id: "template1",
+    name: "Bug Report",
+    title: "Bug: ",
+    description: "Steps to reproduce:\n1.\n2.\n3.\n\nExpected behavior:\n\nActual behavior:",
+    priority: "high",
+    projectId: "p2"
+  }
+];
+
+export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [templates, setTemplates] = useState<Template[]>(initialTemplates);
   const [currentProject, setCurrentProject] = useState<string>("all");
   const [viewType, setViewType] = useState<ViewType>("list");
   const [searchResults, setSearchResults] = useState<Task[] | null>(null);
 
-  // Load data from localStorage on initial render
   useEffect(() => {
     const storedTasks = localStorage.getItem("tasks");
     const storedProjects = localStorage.getItem("projects");
@@ -81,7 +92,6 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
     if (storedViewType) setViewType(storedViewType as ViewType);
   }, []);
 
-  // Save data to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
     localStorage.setItem("projects", JSON.stringify(projects));
@@ -118,11 +128,24 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
     setProjects((prevProjects) => [...prevProjects, newProject]);
   };
 
+  const addTemplate = (template: Omit<Template, "id">) => {
+    const newTemplate: Template = {
+      ...template,
+      id: `template-${Date.now()}`,
+    };
+    setTemplates((prev) => [...prev, newTemplate]);
+  };
+
+  const deleteTemplate = (id: string) => {
+    setTemplates((prev) => prev.filter((template) => template.id !== id));
+  };
+
   return (
     <TaskContext.Provider
       value={{
         tasks,
         projects,
+        templates,
         currentProject,
         viewType,
         searchResults,
@@ -130,6 +153,8 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
         updateTask,
         deleteTask,
         addProject,
+        addTemplate,
+        deleteTemplate,
         setCurrentProject,
         setViewType,
         setSearchResults,

@@ -1,10 +1,12 @@
-
 import React, { useState, useEffect } from "react";
 import { useTaskContext } from "@/context/TaskContext";
-import { Task, Priority, Status } from "@/types";
+import { Task, Priority, Status, Template } from "@/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import TaskFormFields from "./task/TaskFormFields";
 import TaskFormActions from "./task/TaskFormActions";
+import { Button } from "./ui/button";
+import { FileText } from "lucide-react";
+import TemplatesDialog from "./TemplatesDialog";
 
 interface TaskFormProps {
   open: boolean;
@@ -23,6 +25,7 @@ export default function TaskForm({ open, onOpenChange, initialTask, mode }: Task
   const [projectId, setProjectId] = useState("");
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [isTemplatesOpen, setIsTemplatesOpen] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -77,38 +80,61 @@ export default function TaskForm({ open, onOpenChange, initialTask, mode }: Task
     }
   };
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px]">
-        <DialogHeader>
-          <DialogTitle>{mode === "create" ? "Create new task" : "Edit task"}</DialogTitle>
-        </DialogHeader>
-        
-        <TaskFormFields
-          title={title}
-          description={description}
-          priority={priority}
-          status={status}
-          projectId={projectId}
-          dueDate={dueDate}
-          datePickerOpen={datePickerOpen}
-          projects={projects}
-          onTitleChange={setTitle}
-          onDescriptionChange={setDescription}
-          onPriorityChange={setPriority}
-          onStatusChange={setStatus}
-          onProjectChange={setProjectId}
-          onDueDateChange={setDueDate}
-          onDatePickerOpenChange={setDatePickerOpen}
-        />
+  const handleTemplateSelect = (template: Template) => {
+    setTitle(template.title);
+    setDescription(template.description);
+    setPriority(template.priority);
+    setProjectId(template.projectId || currentProject);
+  };
 
-        <TaskFormActions
-          mode={mode}
-          onDelete={handleDelete}
-          onCancel={() => onOpenChange(false)}
-          onSubmit={handleSubmit}
-        />
-      </DialogContent>
-    </Dialog>
+  return (
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[550px]">
+          <DialogHeader>
+            <div className="flex items-center justify-between">
+              <DialogTitle>{mode === "create" ? "Create new task" : "Edit task"}</DialogTitle>
+              {mode === "create" && (
+                <Button variant="outline" onClick={() => setIsTemplatesOpen(true)}>
+                  <FileText className="mr-2 h-4 w-4" />
+                  Use Template
+                </Button>
+              )}
+            </div>
+          </DialogHeader>
+          
+          <TaskFormFields
+            title={title}
+            description={description}
+            priority={priority}
+            status={status}
+            projectId={projectId}
+            dueDate={dueDate}
+            datePickerOpen={datePickerOpen}
+            projects={projects}
+            onTitleChange={setTitle}
+            onDescriptionChange={setDescription}
+            onPriorityChange={setPriority}
+            onStatusChange={setStatus}
+            onProjectChange={setProjectId}
+            onDueDateChange={setDueDate}
+            onDatePickerOpenChange={setDatePickerOpen}
+          />
+
+          <TaskFormActions
+            mode={mode}
+            onDelete={handleDelete}
+            onCancel={() => onOpenChange(false)}
+            onSubmit={handleSubmit}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <TemplatesDialog
+        open={isTemplatesOpen}
+        onOpenChange={setIsTemplatesOpen}
+        onSelectTemplate={handleTemplateSelect}
+      />
+    </>
   );
 }

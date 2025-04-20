@@ -170,9 +170,6 @@ We welcome contributions! Here's how you can help:
 - Add tests for new features
 - Ensure all tests pass
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
@@ -181,11 +178,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
 - [Vite](https://vitejs.dev/) for the fast build tool
 - [React](https://reactjs.org/) for the amazing framework
-
-## 📞 Support
-
-For support, please open an issue in the GitHub repository or contact us at support@taskflow.com.
-
-## 📚 Documentation
-
-For detailed documentation, please visit our [documentation site](https://docs.taskflow.com).

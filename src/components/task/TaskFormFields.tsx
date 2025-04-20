@@ -1,13 +1,22 @@
-
 import React from "react";
 import { Priority, Status } from "@/types";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -71,7 +80,10 @@ export default function TaskFormFields({
       <div className="grid grid-cols-2 gap-4">
         <div className="grid gap-2">
           <Label htmlFor="priority">Priority</Label>
-          <Select value={priority} onValueChange={(value) => onPriorityChange(value as Priority)}>
+          <Select
+            value={priority}
+            onValueChange={(value) => onPriorityChange(value as Priority)}
+          >
             <SelectTrigger id="priority">
               <SelectValue placeholder="Select priority" />
             </SelectTrigger>
@@ -85,7 +97,10 @@ export default function TaskFormFields({
         </div>
         <div className="grid gap-2">
           <Label htmlFor="status">Status</Label>
-          <Select value={status} onValueChange={(value) => onStatusChange(value as Status)}>
+          <Select
+            value={status}
+            onValueChange={(value) => onStatusChange(value as Status)}
+          >
             <SelectTrigger id="status">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
@@ -108,8 +123,8 @@ export default function TaskFormFields({
               {projects.map((project) => (
                 <SelectItem key={project.id} value={project.id}>
                   <div className="flex items-center">
-                    <div 
-                      className="h-2 w-2 rounded-full mr-2" 
+                    <div
+                      className="h-2 w-2 rounded-full mr-2"
                       style={{ backgroundColor: project.color }}
                     />
                     {project.name}
@@ -144,6 +159,10 @@ export default function TaskFormFields({
                   onDatePickerOpenChange(false);
                 }}
                 initialFocus
+                disabled={(date) =>
+                  date < new Date(new Date().setHours(0, 0, 0, 0))
+                }
+                fromDate={new Date()}
               />
             </PopoverContent>
           </Popover>

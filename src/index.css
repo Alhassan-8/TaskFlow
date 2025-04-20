@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 235 86% 65%;
+    --primary: var(--custom-primary, 235 86% 65%);
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -22,7 +23,7 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 245 58% 51%;
+    --accent: var(--custom-accent, 245 58% 51%);
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -30,13 +31,13 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 235 86% 65%;
+    --ring: var(--custom-primary, 235 86% 65%);
 
     --radius: 0.5rem;
 
     --sidebar-background: 237 75% 98%;
     --sidebar-foreground: 235 25% 27%;
-    --sidebar-primary: 235 86% 65%;
+    --sidebar-primary: var(--custom-primary, 235 86% 65%);
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 235 100% 97%;
     --sidebar-accent-foreground: 235 60% 30%;
@@ -54,7 +55,7 @@
     --popover: 240 10% 3.9%;
     --popover-foreground: 213 31% 91%;
 
-    --primary: 235 86% 65%;
+    --primary: var(--custom-primary, 235 86% 65%);
     --primary-foreground: 210 40% 98%;
 
     --secondary: 240 3.7% 15.9%;
@@ -63,7 +64,7 @@
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 245 58% 51%;
+    --accent: var(--custom-accent, 245 58% 51%);
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -71,11 +72,11 @@
 
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 235 86% 65%;
+    --ring: var(--custom-primary, 235 86% 65%);
     
     --sidebar-background: 235 35% 10%;
     --sidebar-foreground: 237 24% 90%;
-    --sidebar-primary: 235 86% 65%;
+    --sidebar-primary: var(--custom-primary, 235 86% 65%);
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 235 35% 15%;
     --sidebar-accent-foreground: 237 24% 90%;

@@ -17,9 +17,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import TaskDependencies from "./TaskDependencies";
 
 interface TaskFormFieldsProps {
   title: string;
@@ -30,6 +31,11 @@ interface TaskFormFieldsProps {
   dueDate?: Date;
   datePickerOpen: boolean;
   projects: Array<{ id: string; name: string; color: string }>;
+  estimatedTime?: number;
+  timeSpent?: number;
+  prerequisites?: string[];
+  checklist?: any[];
+  allTasks: any[];
   onTitleChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
   onPriorityChange: (value: Priority) => void;
@@ -37,6 +43,12 @@ interface TaskFormFieldsProps {
   onProjectChange: (value: string) => void;
   onDueDateChange: (date?: Date) => void;
   onDatePickerOpenChange: (open: boolean) => void;
+  onEstimatedTimeChange: (value: number) => void;
+  onTimeSpentChange: (value: number) => void;
+  onAddPrerequisite: (prerequisiteId: string) => void;
+  onRemovePrerequisite: (prerequisiteId: string) => void;
+  onAddChecklistItem: (item: any) => void;
+  onRemoveChecklistItem: (itemId: string) => void;
 }
 
 export default function TaskFormFields({
@@ -48,6 +60,11 @@ export default function TaskFormFields({
   dueDate,
   datePickerOpen,
   projects,
+  estimatedTime,
+  timeSpent,
+  prerequisites,
+  checklist,
+  allTasks,
   onTitleChange,
   onDescriptionChange,
   onPriorityChange,
@@ -55,6 +72,12 @@ export default function TaskFormFields({
   onProjectChange,
   onDueDateChange,
   onDatePickerOpenChange,
+  onEstimatedTimeChange,
+  onTimeSpentChange,
+  onAddPrerequisite,
+  onRemovePrerequisite,
+  onAddChecklistItem,
+  onRemoveChecklistItem,
 }: TaskFormFieldsProps) {
   return (
     <div className="grid gap-4 py-4">
@@ -123,8 +146,8 @@ export default function TaskFormFields({
               {projects.map((project) => (
                 <SelectItem key={project.id} value={project.id}>
                   <div className="flex items-center">
-                    <div
-                      className="h-2 w-2 rounded-full mr-2"
+                    <div 
+                      className="h-2 w-2 rounded-full mr-2" 
                       style={{ backgroundColor: project.color }}
                     />
                     {project.name}
@@ -172,6 +195,48 @@ export default function TaskFormFields({
           </Popover>
         </div>
       </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="estimated-time">
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Estimated Time (minutes)
+            </div>
+          </Label>
+          <Input
+            id="estimated-time"
+            type="number"
+            min="0"
+            value={estimatedTime || ""}
+            onChange={(e) => onEstimatedTimeChange(Number(e.target.value))}
+            placeholder="Enter estimated time"
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="time-spent">
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Time Spent (minutes)
+            </div>
+          </Label>
+          <Input
+            id="time-spent"
+            type="number"
+            min="0"
+            value={timeSpent || ""}
+            onChange={(e) => onTimeSpentChange(Number(e.target.value))}
+            placeholder="Enter time spent"
+          />
+        </div>
+      </div>
+      <TaskDependencies
+        task={{ id: "", prerequisites, checklist } as any}
+        allTasks={allTasks}
+        onAddPrerequisite={onAddPrerequisite}
+        onRemovePrerequisite={onRemovePrerequisite}
+        onAddChecklistItem={onAddChecklistItem}
+        onRemoveChecklistItem={onRemoveChecklistItem}
+      />
     </div>
   );
 }

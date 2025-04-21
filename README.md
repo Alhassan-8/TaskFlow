@@ -1,180 +1,126 @@
-# TaskFlow 📋
+# TaskFlow - Advanced Task Management System
 
-[![React](https://img.shields.io/badge/React-18.3.1-blue.svg)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.5.3-blue.svg)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-5.4.1-purple.svg)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.11-38B2AC.svg)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+TaskFlow is a modern, feature-rich task management application built with React, TypeScript, and Tailwind CSS. It provides a comprehensive solution for managing tasks, projects, and workflows with an intuitive and beautiful user interface.
 
-A modern, feature-rich task management application built with React, TypeScript, and Shadcn UI. TaskFlow helps you organize your work, track progress, and boost productivity with an intuitive and beautiful interface.
+## Features
 
-## ✨ Key Features
+### Core Task Management
 
-### 🎨 Rich UI Components
+- Create, edit, and delete tasks with detailed information
+- Organize tasks by projects and categories
+- Set priorities (High, Medium, Low) and statuses (Todo, In Progress, Done)
+- Add due dates and descriptions to tasks
+- Drag-and-drop task reordering
+- Task search and filtering capabilities
 
-- **Modern Design**: Clean, accessible UI components using Shadcn UI
-- **Responsive Layout**: Seamless experience across all devices
-- **Theme Support**: Dark/Light mode with smooth transitions
-- **Interactive Elements**:
-  - Toast notifications for system feedback
-  - Modal dialogs for focused interactions
-  - Custom form controls for better UX
-  - Tooltips and popovers for additional information
+### Project Management
 
-### 📝 Task Management
+- Create and manage multiple projects
+- Custom project colors for visual organization
+- Project-specific task views
+- Project deletion with confirmation and associated task cleanup
 
-- **Task Operations**: Create, edit, delete, and archive tasks
-- **Organization**:
-  - Categorize tasks with custom labels
-  - Filter and sort by priority, due date, or status
-  - Search functionality with instant results
-- **Priority System**:
-  - Multiple priority levels
-  - Visual indicators for quick recognition
-- **Time Management**:
-  - Due date tracking with reminders
-  - Time estimation and tracking
-  - Calendar integration
+### Advanced Task Features
 
-### 📊 Data Visualization
+- **Task Dependencies**: Link tasks together to create dependencies
+- **Subtasks**: Break down tasks into smaller, manageable subtasks
+- **Time Tracking**: Track estimated and actual time spent on tasks
+- **Task Comments**: Add and reply to comments on tasks
+- **File Attachments**: Attach files to tasks with preview support
+- **Recurring Tasks**: Set up recurring tasks with customizable patterns
+- **Task Templates**: Create and use templates for common task types
 
-- **Progress Tracking**:
-  - Interactive charts for task completion
-  - Burn-down charts for project progress
-  - Customizable dashboards
-- **Analytics**:
-  - Task completion rates
-  - Time spent analysis
-  - Productivity trends
+### Tag Management
 
-### 📋 Form Handling
+- Create and manage custom tags
+- Assign multiple tags to tasks
+- Color-coded tags for better organization
+- Tag filtering and search
 
-- **Validation**:
-  - Real-time form validation
-  - Custom validation rules
-  - Error messages with suggestions
-- **Input Types**:
-  - OTP input for secure verification
-  - Date picker with range selection
-  - Rich text editor for detailed descriptions
+### User Interface
 
-## 🛠️ Technology Stack
+- **Dark Mode**: Beautiful dark theme with smooth transitions
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Modern UI**: Clean, intuitive interface with smooth animations
+- **Customizable Themes**: Create and manage custom color themes
+- **Keyboard Shortcuts**: Quick access to common actions
+- **Accessibility**: Built with accessibility in mind
 
-### Core Technologies
+### Data Management
 
-- **Frontend Framework**: React 18 with TypeScript
-- **Build Tool**: Vite
-- **Styling**:
-  - Tailwind CSS for utility-first styling
-  - Shadcn UI for component library
-  - CSS Modules for component-specific styles
+- Local storage for data persistence
+- Import/Export functionality for tasks and projects
+- Automatic data backup
+- Data validation and error handling
 
-### State Management & Data
-
-- **Data Fetching**: React Query for efficient data management
-- **Routing**: React Router for navigation
-- **Form Management**:
-  - React Hook Form for form handling
-  - Zod for schema validation
-
-### UI Components
-
-- **Component Library**: Radix UI primitives
-- **Icons**: Lucide React for consistent iconography
-- **Charts**: Recharts for data visualization
-- **Animations**: Framer Motion for smooth transitions
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
-- npm, yarn, or bun package manager
+- Node.js (v14 or higher)
+- npm or yarn
 
 ### Installation
 
 1. Clone the repository:
 
-```bash
-git clone https://github.com/yourusername/TaskFlow.git
-cd TaskFlow
-```
+   ```bash
+   git clone https://github.com/yourusername/TaskFlow.git
+   cd TaskFlow
+   ```
 
 2. Install dependencies:
 
-```bash
-npm install
-# or
-yarn install
-# or
-bun install
-```
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
 3. Start the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-bun dev
-```
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-4. Open [http://localhost:5173](http://localhost:5173) in your browser.
+4. Open your browser and navigate to `http://localhost:3000`
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 src/
-├── components/          # Reusable UI components
-│   ├── ui/             # Shadcn UI components
-│   ├── forms/          # Form components
-│   └── layout/         # Layout components
-├── context/            # React context providers
-├── hooks/              # Custom React hooks
-├── lib/                # Utility functions
-│   ├── utils/          # Helper functions
-│   └── api/            # API client
-├── pages/              # Page components
-├── types/              # TypeScript definitions
-├── styles/             # Global styles
-├── App.tsx             # Main application
-└── main.tsx            # Entry point
+├── components/         # React components
+├── context/           # React context providers
+├── hooks/             # Custom React hooks
+├── lib/               # Utility functions and helpers
+├── pages/             # Page components
+├── styles/            # Global styles and theme
+└── types/             # TypeScript type definitions
 ```
 
-## 🧪 Available Scripts
+## Technologies Used
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run build:dev` - Build for development
-- `npm run lint` - Run ESLint
-- `npm run preview` - Preview production build
-- `npm run test` - Run tests
-- `npm run format` - Format code with Prettier
+- **Frontend Framework**: React with TypeScript
+- **Styling**: Tailwind CSS with custom theme support
+- **State Management**: React Context API
+- **UI Components**: Custom-built components with accessibility support
+- **Icons**: Lucide React
+- **Date Handling**: date-fns
+- **Form Handling**: React Hook Form
+- **Animation**: Framer Motion
 
-## 🤝 Contributing
+## Contributing
 
-We welcome contributions! Here's how you can help:
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## License
 
-### Development Guidelines
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-- Follow the existing code style
-- Write meaningful commit messages
-- Update documentation as needed
-- Add tests for new features
-- Ensure all tests pass
+## Acknowledgments
 
-
-## 🙏 Acknowledgments
-
-- [Shadcn UI](https://ui.shadcn.com/) for the amazing component library
-- [Radix UI](https://www.radix-ui.com/) for the primitive components
-- [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
-- [Vite](https://vitejs.dev/) for the fast build tool
-- [React](https://reactjs.org/) for the amazing framework
+- Inspired by modern task management applications
+- Built with the latest web technologies
+- Focused on user experience and accessibility

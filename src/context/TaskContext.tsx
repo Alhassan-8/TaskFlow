@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Task, Project, Priority, Status, Template } from "@/types";
+import { Task, Project, Priority, Status, Template, Tag } from "@/types";
 
 type ViewType = "list" | "board";
 
@@ -14,18 +14,38 @@ interface TaskContextType {
   updateTask: (id: string, taskData: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   addProject: (project: Omit<Project, "id">) => void;
+  deleteProject: (id: string) => void;
   addTemplate: (template: Omit<Template, "id">) => void;
   deleteTemplate: (id: string) => void;
   setCurrentProject: (projectId: string) => void;
   setViewType: (view: ViewType) => void;
   setSearchResults: (results: Task[] | null) => void;
+  addTag: (projectId: string, tag: Omit<Tag, "id">) => void;
+  removeTag: (projectId: string, tagId: string) => void;
+  updateTaskTags: (taskId: string, tagIds: string[]) => void;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
 const initialProjects: Project[] = [
-  { id: "p1", name: "Personal", color: "#6366f1" },
-  { id: "p2", name: "Work", color: "#8b5cf6" },
+  {
+    id: "p1",
+    name: "Personal",
+    color: "#6366f1",
+    tags: [
+      { id: "t1", name: "Home", color: "#ef4444" },
+      { id: "t2", name: "Family", color: "#3b82f6" },
+    ],
+  },
+  {
+    id: "p2",
+    name: "Work",
+    color: "#8b5cf6",
+    tags: [
+      { id: "t3", name: "Development", color: "#22c55e" },
+      { id: "t4", name: "Meeting", color: "#f97316" },
+    ],
+  },
 ];
 
 const initialTasks: Task[] = [
@@ -66,13 +86,16 @@ const initialTemplates: Template[] = [
     id: "template1",
     name: "Bug Report",
     title: "Bug: ",
-    description: "Steps to reproduce:\n1.\n2.\n3.\n\nExpected behavior:\n\nActual behavior:",
+    description:
+      "Steps to reproduce:\n1.\n2.\n3.\n\nExpected behavior:\n\nActual behavior:",
     priority: "high",
-    projectId: "p2"
-  }
+    projectId: "p2",
+  },
 ];
 
-export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [templates, setTemplates] = useState<Template[]>(initialTemplates);
@@ -104,6 +127,10 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ...task,
       id: `task-${Date.now()}`,
       createdAt: new Date(),
+      dependencies: task.dependencies || [],
+      subtasks: task.subtasks || [],
+      estimatedTime: task.estimatedTime,
+      timeSpent: task.timeSpent,
     };
     setTasks((prevTasks) => [...prevTasks, newTask]);
   };
@@ -117,6 +144,14 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const deleteTask = (id: string) => {
+    // Remove task from dependencies of other tasks
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => ({
+        ...task,
+        dependencies: task.dependencies?.filter((depId) => depId !== id) || [],
+      }))
+    );
+    // Remove the task itself
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
   };
 
@@ -126,6 +161,21 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       id: `project-${Date.now()}`,
     };
     setProjects((prevProjects) => [...prevProjects, newProject]);
+  };
+
+  const deleteProject = (id: string) => {
+    // Remove project from projects list
+    setProjects((prevProjects) =>
+      prevProjects.filter((project) => project.id !== id)
+    );
+
+    // Remove tasks associated with the project
+    setTasks((prevTasks) => prevTasks.filter((task) => task.projectId !== id));
+
+    // If the deleted project was the current project, switch to "all" view
+    if (currentProject === id) {
+      setCurrentProject("all");
+    }
   };
 
   const addTemplate = (template: Omit<Template, "id">) => {
@@ -138,6 +188,49 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const deleteTemplate = (id: string) => {
     setTemplates((prev) => prev.filter((template) => template.id !== id));
+  };
+
+  const addTag = (projectId: string, tag: Omit<Tag, "id">) => {
+    const newTag: Tag = {
+      ...tag,
+      id: `tag-${Date.now()}`,
+    };
+    setProjects((prevProjects) =>
+      prevProjects.map((project) =>
+        project.id === projectId
+          ? { ...project, tags: [...(project.tags || []), newTag] }
+          : project
+      )
+    );
+  };
+
+  const removeTag = (projectId: string, tagId: string) => {
+    // Remove tag from projects
+    setProjects((prevProjects) =>
+      prevProjects.map((project) =>
+        project.id === projectId
+          ? {
+              ...project,
+              tags: project.tags?.filter((tag) => tag.id !== tagId),
+            }
+          : project
+      )
+    );
+    // Remove tag from tasks
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => ({
+        ...task,
+        tags: task.tags?.filter((id) => id !== tagId),
+      }))
+    );
+  };
+
+  const updateTaskTags = (taskId: string, tagIds: string[]) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, tags: tagIds } : task
+      )
+    );
   };
 
   return (
@@ -153,11 +246,15 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateTask,
         deleteTask,
         addProject,
+        deleteProject,
         addTemplate,
         deleteTemplate,
         setCurrentProject,
         setViewType,
         setSearchResults,
+        addTag,
+        removeTag,
+        updateTaskTags,
       }}
     >
       {children}

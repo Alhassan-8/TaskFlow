@@ -1,20 +1,41 @@
-
 import React, { useState } from "react";
 import { useTaskContext } from "@/context/TaskContext";
-import { Plus, Folder, LayoutDashboard, ListTodo, MenuIcon, X } from "lucide-react";
+import {
+  Plus,
+  Folder,
+  LayoutDashboard,
+  ListTodo,
+  MenuIcon,
+  X,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 export default function Sidebar() {
-  const { projects, currentProject, setCurrentProject, addProject } = useTaskContext();
+  const {
+    projects,
+    currentProject,
+    setCurrentProject,
+    addProject,
+    deleteProject,
+  } = useTaskContext();
   const [isOpen, setIsOpen] = useState(false);
   const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [newProjectColor, setNewProjectColor] = useState("#6366f1");
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const isMobile = useIsMobile();
 
   const handleAddProject = () => {
@@ -30,6 +51,17 @@ export default function Sidebar() {
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleDeleteProject = (projectId: string) => {
+    setProjectToDelete(projectId);
+  };
+
+  const confirmDelete = () => {
+    if (projectToDelete) {
+      deleteProject(projectToDelete);
+      setProjectToDelete(null);
+    }
   };
 
   const colorOptions = [
@@ -67,12 +99,19 @@ export default function Sidebar() {
 
       <div className="px-3 py-2">
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-sm font-semibold text-muted-foreground">PROJECTS</h2>
-          <Button variant="ghost" size="icon" onClick={() => setIsProjectDialogOpen(true)} className="h-7 w-7">
+          <h2 className="text-sm font-semibold text-muted-foreground">
+            PROJECTS
+          </h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsProjectDialogOpen(true)}
+            className="h-7 w-7"
+          >
             <Plus className="h-4 w-4" />
           </Button>
         </div>
-        
+
         <div className="space-y-1 mt-3">
           <Button
             variant={currentProject === "all" ? "secondary" : "ghost"}
@@ -82,20 +121,39 @@ export default function Sidebar() {
             <ListTodo className="mr-2 h-4 w-4" />
             All Tasks
           </Button>
-          
+
           {projects.map((project) => (
-            <Button
-              key={project.id}
-              variant={currentProject === project.id ? "secondary" : "ghost"}
-              className="w-full justify-start"
-              onClick={() => setCurrentProject(project.id)}
-            >
-              <div 
-                className="mr-2 h-3 w-3 rounded-full" 
-                style={{ backgroundColor: project.color }}
-              />
-              {project.name}
-            </Button>
+            <div key={project.id} className="flex items-center gap-2">
+              <Button
+                variant={currentProject === project.id ? "secondary" : "ghost"}
+                className={cn(
+                  "w-full justify-start transition-all duration-200",
+                  "hover:bg-accent/50 hover:text-accent-foreground",
+                  "active:scale-[0.98]",
+                  currentProject === project.id &&
+                    "bg-accent/80 text-accent-foreground border-l-4 border-primary/80 shadow-sm"
+                )}
+                onClick={() => setCurrentProject(project.id)}
+              >
+                <div
+                  className={cn(
+                    "mr-2 h-3 w-3 rounded-full transition-transform duration-200",
+                    "hover:scale-110",
+                    currentProject === project.id && "scale-110"
+                  )}
+                  style={{ backgroundColor: project.color }}
+                />
+                <span className="truncate">{project.name}</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => handleDeleteProject(project.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
           ))}
         </div>
       </div>
@@ -105,9 +163,9 @@ export default function Sidebar() {
   return (
     <>
       {isMobile && (
-        <Button 
-          variant="outline" 
-          size="icon" 
+        <Button
+          variant="outline"
+          size="icon"
           className="fixed top-4 left-4 z-40"
           onClick={toggleSidebar}
         >
@@ -115,10 +173,14 @@ export default function Sidebar() {
         </Button>
       )}
 
-      <aside 
+      <aside
         className={cn(
           "bg-sidebar fixed top-0 bottom-0 left-0 z-50 w-64 border-r border-sidebar-border",
-          isMobile ? (isOpen ? "translate-x-0" : "-translate-x-full") : "translate-x-0",
+          isMobile
+            ? isOpen
+              ? "translate-x-0"
+              : "-translate-x-full"
+            : "translate-x-0",
           "transition-transform duration-300 ease-in-out"
         )}
       >
@@ -144,11 +206,13 @@ export default function Sidebar() {
               <Label>Project color</Label>
               <div className="flex flex-wrap gap-2">
                 {colorOptions.map((color) => (
-                  <div 
+                  <div
                     key={color}
                     className={cn(
                       "h-8 w-8 rounded-full cursor-pointer border-2",
-                      newProjectColor === color ? "border-primary" : "border-transparent"
+                      newProjectColor === color
+                        ? "border-primary"
+                        : "border-transparent"
                     )}
                     style={{ backgroundColor: color }}
                     onClick={() => setNewProjectColor(color)}
@@ -158,7 +222,33 @@ export default function Sidebar() {
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" onClick={handleAddProject}>Create project</Button>
+            <Button type="submit" onClick={handleAddProject}>
+              Create project
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={!!projectToDelete}
+        onOpenChange={() => setProjectToDelete(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Project</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this project? This action cannot
+              be undone and will also delete all tasks associated with this
+              project.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setProjectToDelete(null)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Delete
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

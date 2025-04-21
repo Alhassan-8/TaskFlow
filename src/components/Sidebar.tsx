@@ -188,9 +188,13 @@ export default function Sidebar() {
       </aside>
 
       <Dialog open={isProjectDialogOpen} onOpenChange={setIsProjectDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create new project</DialogTitle>
+            <DialogTitle>Create New Project</DialogTitle>
+            <DialogDescription>
+              Create a new project to organize your tasks. You can customize the
+              project name and color.
+            </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
@@ -216,15 +220,21 @@ export default function Sidebar() {
                     )}
                     style={{ backgroundColor: color }}
                     onClick={() => setNewProjectColor(color)}
+                    role="button"
+                    aria-label={`Select color ${color}`}
                   />
                 ))}
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" onClick={handleAddProject}>
-              Create project
+            <Button
+              variant="outline"
+              onClick={() => setIsProjectDialogOpen(false)}
+            >
+              Cancel
             </Button>
+            <Button onClick={handleAddProject}>Create</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

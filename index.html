@@ -3,7 +3,59 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TaskFlow</title>
+    <meta
+      name="description"
+      content="TaskFlow - A modern task management application for organizing your projects and tasks efficiently"
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="author" content="TaskFlow Team" />
+    <title>TaskFlow - Modern Task Management</title>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="TaskFlow - Modern Task Management" />
+    <meta
+      property="og:description"
+      content="A modern task management application for organizing your projects and tasks efficiently"
+    />
+    <meta property="og:site_name" content="TaskFlow" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="TaskFlow - Modern Task Management" />
+    <meta
+      name="twitter:description"
+      content="A modern task management application for organizing your projects and tasks efficiently"
+    />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="TaskFlow" />
+    <link rel="apple-touch-icon" href="/icon-192x192.png" />
+
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/icon-192x192.png" />
+
+    <!-- Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-XXXXXXXXXX");
+    </script>
   </head>
 
   <body>

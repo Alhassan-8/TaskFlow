@@ -131,7 +131,7 @@ export default function Sidebar() {
                   "hover:bg-accent/50 hover:text-accent-foreground",
                   "active:scale-[0.98]",
                   currentProject === project.id &&
-                    "bg-accent/80 text-accent-foreground border-l-4 border-primary/80 shadow-sm"
+                    "bg-accent text-foreground border-l-4 border-primary shadow-sm font-semibold"
                 )}
                 onClick={() => setCurrentProject(project.id)}
               >

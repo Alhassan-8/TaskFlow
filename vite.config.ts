@@ -21,9 +21,15 @@ export default defineConfig(({ mode }) => ({
     minify: "terser",
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ["react", "react-dom", "react-router-dom"],
-          ui: ["@radix-ui/react-*"],
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("node_modules/react")) {
+              return "vendor";
+            }
+            if (id.includes("node_modules/@radix-ui/")) {
+              return "ui";
+            }
+          }
         },
       },
     },
